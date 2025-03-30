@@ -6,4 +6,6 @@ add_executable(dynamic_array_test dynamic_array_test.c)
 
 target_link_libraries(dynamic_array_test dynamic_array_lib)
 
+target_link_libraries(dynamic_array_test ds_test_lib)
+
 add_test(NAME dynamic_array_test COMMAND dynamic_array_test)
