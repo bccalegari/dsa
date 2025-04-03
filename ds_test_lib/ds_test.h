@@ -15,6 +15,8 @@ typedef struct {
 void assert_equal(int expected, int actual);
 void assert_true(bool condition);
 void assert_false(bool condition);
+void assert_null(const void* ptr);
+void assert_not_null(const void* ptr);
 void register_test(TestFunction fn, const char* name);
 void run_tests();
 

@@ -26,6 +26,20 @@ void assert_false(const bool condition) {
     }
 }
 
+void assert_null(const void* ptr) {
+    if (ptr != NULL) {
+        fprintf(stderr, "Expected pointer to be NULL.\n");
+        exit(1);
+    }
+}
+
+void assert_not_null(const void* ptr) {
+    if (ptr == NULL) {
+        fprintf(stderr, "Expected pointer to be not NULL.\n");
+        exit(1);
+    }
+}
+
 void register_test(const TestFunction fn, const char* name) {
     if (test_registry_count >= 100) {
         fprintf(stderr, "Maximum number of tests reached.\n");
