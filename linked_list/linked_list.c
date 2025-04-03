@@ -128,3 +128,85 @@ void ll_insert_at(LinkedList* ll, int data, int index) {
     current->next = new_node;
     ll->size++;
 }
+
+int ll_remove_at_head(LinkedList* ll) {
+    if (ll->head == NULL && ll->size == 0) {
+        handle_error(ERROR_INVALID_INPUT, __FILE_NAME__, __LINE__, __func__);
+        exit(EXIT_FAILURE);
+    }
+
+    Node* head = ll->head;
+
+    if (ll->size == 1) {
+        ll->head = NULL;
+        ll->tail = NULL;
+        ll->size--;
+        return head->data;
+    }
+
+    Node* new_head = head->next;
+    ll->head = new_head;
+    ll->size--;
+
+    return head->data;
+}
+
+int ll_remove_at_tail(LinkedList* ll) {
+    if (ll->head == NULL && ll->size == 0) {
+        handle_error(ERROR_INVALID_INPUT, __FILE_NAME__, __LINE__, __func__);
+        exit(EXIT_FAILURE);
+    }
+
+    Node* tail = ll->tail;
+    int tail_data = tail->data;
+
+    if (ll->size == 1) {
+        ll->head = NULL;
+        ll->tail = NULL;
+        ll->size--;
+        free(tail);
+        return tail_data;
+    }
+
+    Node* current = ll->head;
+
+    while (current->next != tail) {
+        current = current->next;
+    }
+
+    current->next = NULL;
+    ll->tail = current;
+    ll->size--;
+
+    free(tail);
+    return tail_data;
+}
+
+int ll_remove_at(LinkedList* ll, int index) {
+    if (ll->head == NULL && ll->size == 0) {
+        handle_error(ERROR_INVALID_INPUT, __FILE_NAME__, __LINE__, __func__);
+        exit(EXIT_FAILURE);
+    }
+
+    if (index == 0) {
+        return ll_remove_at_head(ll);
+    }
+
+    if (index == ll->size) {
+        return ll_remove_at_tail(ll);
+    }
+
+    Node* current = ll->head;
+
+    for (int i = 0; i < index - 1; i++) {
+        current = current->next;
+    }
+
+    Node* to_remove = current->next;
+    int to_remove_data = to_remove->data;
+    current->next = to_remove->next;
+    free(to_remove);
+    ll->size--;
+
+    return to_remove_data;
+}
