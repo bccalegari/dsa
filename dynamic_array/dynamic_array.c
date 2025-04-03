@@ -8,23 +8,23 @@ typedef enum {
     ERROR_INDEX_OUT_OF_BOUNDS
 } ErrorType;
 
-const char* error_messages[] = {
+char* error_messages[] = {
     "Memory allocation failed",
     "Invalid input provided",
     "Index out of bounds"
 };
 
-void handle_error(const ErrorType error_type, const char* file, const int line, const char* func) {
+void handle_error(ErrorType error_type, char* file, int line, char* func) {
     fprintf(stderr, "ERROR (%s:%d) - %s: %s", file, line, func, error_messages[error_type]);
 }
 
-bool dy_is_half_max_length(const DynamicArray* dy) {
+bool dy_is_half_max_length(DynamicArray* dy) {
     return dy->size >= dy->capacity / 2;
 }
 
 void resize_dy(DynamicArray* dy) {
     dy->capacity = dy->capacity * 2;
-    dy->data = realloc(dy->data, sizeof(int*) * dy->capacity);
+    dy->data = realloc(dy->data, sizeof(int) * dy->capacity);
 
     if (dy->data == NULL) {
         free(dy->data);
@@ -35,7 +35,7 @@ void resize_dy(DynamicArray* dy) {
 }
 
 DynamicArray* dy_create() {
-    DynamicArray* dy = malloc(sizeof(DynamicArray*));
+    DynamicArray* dy = malloc(sizeof(DynamicArray));
 
     if (dy == NULL) {
         handle_error(ERROR_MEMORY_ALLOCATION, __FILE_NAME__, __LINE__, __func__);
@@ -44,7 +44,7 @@ DynamicArray* dy_create() {
 
     dy->size = 0;
     dy->capacity = 16;
-    dy->data = malloc(sizeof(int*) * dy->capacity);
+    dy->data = malloc(sizeof(int) * dy->capacity);
 
     if (dy->data == NULL) {
         handle_error(ERROR_MEMORY_ALLOCATION, __FILE_NAME__, __LINE__, __func__);
@@ -62,7 +62,11 @@ void dy_destroy(DynamicArray* dy) {
     }
 }
 
-void dy_insert(DynamicArray* dy, const int data) {
+size_t dy_size(DynamicArray* dy) {
+    return dy->size;
+}
+
+void dy_insert(DynamicArray* dy, int data) {
     if (dy_is_half_max_length(dy)) {
         resize_dy(dy);
     }
@@ -70,7 +74,7 @@ void dy_insert(DynamicArray* dy, const int data) {
     dy->data[dy->size++] = data;
 }
 
-void dy_insert_at(DynamicArray* dy, const int data, const int index) {
+void dy_insert_at(DynamicArray* dy, int data, int index) {
     if (dy_is_half_max_length(dy)) {
         resize_dy(dy);
     }
@@ -93,12 +97,12 @@ int dy_remove(DynamicArray* dy) {
         exit(1);
     }
 
-    const int value = dy->data[dy->size - 1];
+    int value = dy->data[dy->size - 1];
     dy->size--;
     return value;
 }
 
-int dy_remove_at(DynamicArray* dy, const int index) {
+int dy_remove_at(DynamicArray* dy, int index) {
     if (dy->size <= 0) {
         handle_error(ERROR_INVALID_INPUT, __FILE_NAME__, __LINE__, __func__);
         exit(1);
@@ -108,7 +112,7 @@ int dy_remove_at(DynamicArray* dy, const int index) {
         handle_error(ERROR_INDEX_OUT_OF_BOUNDS, __FILE_NAME__, __LINE__, __func__);
     }
 
-    const int value = dy->data[index];
+    int value = dy->data[index];
 
     for(int i = index; i < dy->size - 1; i++) {
         dy->data[i] = dy->data[i+1];
@@ -118,7 +122,7 @@ int dy_remove_at(DynamicArray* dy, const int index) {
     return value;
 }
 
-int dy_get(const DynamicArray* dy, const int index) {
+int dy_get(DynamicArray* dy, int index) {
     if (index >= dy->size || index < 0) {
         handle_error(ERROR_INDEX_OUT_OF_BOUNDS, __FILE_NAME__, __LINE__, __func__);
     }
@@ -126,7 +130,7 @@ int dy_get(const DynamicArray* dy, const int index) {
     return dy->data[index];
 }
 
-int dy_search(const DynamicArray* dy, const int data) {
+int dy_search(DynamicArray* dy, int data) {
     for(int i = 0; i < dy->size - 1; i++) {
         if (dy->data[i] == data) {
             return i;
@@ -136,7 +140,7 @@ int dy_search(const DynamicArray* dy, const int data) {
     return -1;
 }
 
-bool dy_contains(const DynamicArray* dy, const int data) {
+bool dy_contains(DynamicArray* dy, int data) {
     for(int i = 0; i < dy->size - 1; i++) {
         if (dy->data[i] == data) {
             return true;
@@ -147,13 +151,13 @@ bool dy_contains(const DynamicArray* dy, const int data) {
 }
 
 //Selection sort O(n^2)
-void dy_sort(const DynamicArray* dy, const int mode) {
+void dy_sort(DynamicArray* dy, int mode) {
     switch (mode) {
         case 0:
             for(int i = 0; i < dy->size - 1; i++) {
                 for(int j = i + 1; j < dy->size; j++) {
                     if (dy->data[j] < dy->data[i]) {
-                        const int temp = dy->data[j];
+                        int temp = dy->data[j];
                         dy->data[j] = dy->data[i];
                         dy->data[i] = temp;
                     }
@@ -164,7 +168,7 @@ void dy_sort(const DynamicArray* dy, const int mode) {
             for(int i = 0; i < dy->size - 1; i++) {
                 for(int j = i + 1; j < dy->size; j++) {
                     if (dy->data[j] > dy->data[i]) {
-                        const int temp = dy->data[j];
+                        int temp = dy->data[j];
                         dy->data[j] = dy->data[i];
                         dy->data[i] = temp;
                     }
@@ -176,7 +180,7 @@ void dy_sort(const DynamicArray* dy, const int mode) {
     }
 }
 
-void dy_reverse(const DynamicArray* dy) {
+void dy_reverse(DynamicArray* dy) {
     int* temp = malloc(sizeof(int) * dy->size);
 
     if (temp == NULL) {
@@ -199,7 +203,7 @@ void dy_reverse(const DynamicArray* dy) {
     free(temp);
 }
 
-void dy_foreach(const DynamicArray* dy, void (*fn)(int*)) {
+void dy_foreach(DynamicArray* dy, void (*fn)(int*)) {
     for(int i = 0; i <= dy->size - 1; i++) {
         fn(&dy->data[i]);
     }
@@ -208,7 +212,7 @@ void dy_foreach(const DynamicArray* dy, void (*fn)(int*)) {
 void dy_clear(DynamicArray* dy) {
     dy->size = 0;
     dy->capacity = 8;
-    dy->data = realloc(dy->data, sizeof(int*) * dy->capacity);
+    dy->data = realloc(dy->data, sizeof(int) * dy->capacity);
 
     if (dy->data == NULL) {
         free(dy->data);
@@ -218,7 +222,7 @@ void dy_clear(DynamicArray* dy) {
     }
 }
 
-void dy_print(const DynamicArray* dy) {
+void dy_print(DynamicArray* dy) {
     printf("DynamicArray@%p {", dy);
     printf("size: %zu, capacity: %d, data@%p: [", dy->size, dy->capacity, dy->data);
 
@@ -233,7 +237,7 @@ void dy_print(const DynamicArray* dy) {
     printf("%d]}\n", dy->data[dy->size - 1]);
 }
 
-void dy_print_data(const DynamicArray* dy) {
+void dy_print_data(DynamicArray* dy) {
     printf("DynamicArray_data@%p [", dy->data);
 
     if (dy->size == 0) {

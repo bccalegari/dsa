@@ -2,6 +2,16 @@
 
 #include "../ds_test_lib/ds_test.h"
 
+void should_get_size_dynamic_array() {
+    DynamicArray* dy = dy_create();
+    assert_equal(dy_size(dy), 0);
+    dy_insert(dy, 2);
+    assert_equal(dy_size(dy), 1);
+    dy_insert(dy, 3);
+    assert_equal(dy_size(dy), 2);
+    dy_destroy(dy);
+}
+
 void should_insert_dynamic_array() {
     DynamicArray* dy = dy_create();
     dy_insert(dy, 2);
@@ -150,6 +160,7 @@ void should_clear_dynamic_array() {
 
 int main(void)
 {
+    register_test(should_get_size_dynamic_array, "should_get_size_dynamic_array");
     register_test(should_insert_dynamic_array, "should_insert_dynamic_array");
     register_test(should_insert_at_dynamic_array, "should_insert_at_dynamic_array");
     register_test(should_remove_dynamic_array, "should_remove_dynamic_array");
