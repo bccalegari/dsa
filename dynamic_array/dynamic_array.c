@@ -155,23 +155,35 @@ void dy_sort(DynamicArray* dy, int mode) {
     switch (mode) {
         case 0:
             for(int i = 0; i < dy->size - 1; i++) {
+                int min_index = i;
+
                 for(int j = i + 1; j < dy->size; j++) {
-                    if (dy->data[j] < dy->data[i]) {
-                        int temp = dy->data[j];
-                        dy->data[j] = dy->data[i];
-                        dy->data[i] = temp;
+                    if (dy->data[j] < dy->data[min_index]) {
+                        min_index = j;
                     }
+                }
+
+                if (min_index != i) {
+                    int temp = dy->data[i];
+                    dy->data[i] = dy->data[min_index];
+                    dy->data[min_index] = temp;
                 }
             }
             break;
         case 1:
             for(int i = 0; i < dy->size - 1; i++) {
+                int max_index = i;
+
                 for(int j = i + 1; j < dy->size; j++) {
-                    if (dy->data[j] > dy->data[i]) {
-                        int temp = dy->data[j];
-                        dy->data[j] = dy->data[i];
-                        dy->data[i] = temp;
+                    if (dy->data[j] > dy->data[max_index]) {
+                        max_index = j;
                     }
+                }
+
+                if (max_index != i) {
+                    int temp = dy->data[i];
+                    dy->data[i] = dy->data[max_index];
+                    dy->data[max_index] = temp;
                 }
             }
             break;
