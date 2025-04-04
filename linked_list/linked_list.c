@@ -210,3 +210,136 @@ int ll_remove_at(LinkedList* ll, int index) {
 
     return to_remove_data;
 }
+
+int ll_get_head(LinkedList* ll) {
+    if (ll->head == NULL && ll->size == 0) {
+        handle_error(ERROR_INVALID_INPUT, __FILE_NAME__, __LINE__, __func__);
+        exit(EXIT_FAILURE);
+    }
+
+    return ll->head->data;
+}
+
+int ll_get_tail(LinkedList* ll) {
+    if (ll->head == NULL && ll->size == 0) {
+        handle_error(ERROR_INVALID_INPUT, __FILE_NAME__, __LINE__, __func__);
+        exit(EXIT_FAILURE);
+    }
+
+    return ll->tail->data;
+}
+
+int ll_get(LinkedList* ll, int index) {
+    if (ll->head == NULL && ll->size == 0) {
+        handle_error(ERROR_INVALID_INPUT, __FILE_NAME__, __LINE__, __func__);
+        exit(EXIT_FAILURE);
+    }
+
+    if (index > ll->size || index < 0) {
+        handle_error(ERROR_INDEX_OUT_OF_BOUNDS, __FILE_NAME__, __LINE__, __func__);
+        exit(EXIT_FAILURE);
+    }
+
+    if (index == 0) {
+        return ll_get_head(ll);
+    }
+
+    if (index == ll->size) {
+        return ll_get_tail(ll);
+    }
+
+    Node* current = ll->head;
+
+    for (int i = 0; i < index; i++) {
+        current = current->next;
+    }
+
+    return current->data;
+}
+
+int ll_search(LinkedList* ll, int data) {
+    if (ll->head == NULL && ll->size == 0) {
+        handle_error(ERROR_INVALID_INPUT, __FILE_NAME__, __LINE__, __func__);
+        exit(EXIT_FAILURE);
+    }
+
+    Node* current = ll->head;
+
+    int index = 0;
+
+    while(current != NULL) {
+        if (current->data == data) {
+            return index;
+        }
+        current = current->next;
+        index++;
+    }
+
+    return -1;
+}
+
+bool ll_contains(LinkedList* ll, int data) {
+    if (ll->head == NULL && ll->size == 0) {
+        handle_error(ERROR_INVALID_INPUT, __FILE_NAME__, __LINE__, __func__);
+        exit(EXIT_FAILURE);
+    }
+
+    Node* current = ll->head;
+
+    while(current != NULL) {
+        if (current->data == data) {
+            return true;
+        }
+        current = current->next;
+    }
+
+    return false;
+}
+
+//Selection sort O(n^2)
+void ll_sort(LinkedList* ll, int mode) {
+    if (ll->head == NULL && ll->size == 0) {
+        handle_error(ERROR_INVALID_INPUT, __FILE_NAME__, __LINE__, __func__);
+        exit(EXIT_FAILURE);
+    }
+
+    switch (mode) {
+        case 0:
+            for (Node* current = ll->head; current != NULL; current = current->next) {
+                Node* min = current;
+
+                for (Node* next = current->next; next != NULL; next = next->next) {
+                    if (next->data < min->data) {
+                        min = next;
+                    }
+                }
+
+                if (min != current) {
+                    int temp = current->data;
+                    current->data = min->data;
+                    min->data = temp;
+                }
+            }
+            break;
+        case 1:
+            for (Node* current = ll->head; current != NULL; current = current->next) {
+                Node* max = current;
+
+                for (Node* next = current->next; next != NULL; next = next->next) {
+                    if (next->data > max->data) {
+                        max = next;
+                    }
+                }
+
+                if (max != current) {
+                    int temp = current->data;
+                    current->data = max->data;
+                    max->data = temp;
+                }
+            }
+            break;
+        default:
+            handle_error(ERROR_INVALID_INPUT, __FILE_NAME__, __LINE__, __func__);
+            exit(EXIT_FAILURE);
+    }
+}
